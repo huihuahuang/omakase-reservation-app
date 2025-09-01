@@ -637,6 +637,23 @@ BEGIN
 END $$
 DELIMITER ;
 
+-- 5. Create event handler to delete expired reservations every hour
+SET GLOBAL event_scheduler = ON;
+-- In this way, the expired reservations from initial AI-generated data will not appear in the table.
+DROP EVENT IF EXISTS delete_expired_reservations;
+DELIMITER $$
+CREATE EVENT delete_expired_reservations
+ON SCHEDULE EVERY 1 HOUR
+STARTS CURRENT_TIMESTAMP
+DO 
+BEGIN
+	DELETE
+    FROM reservations
+    -- Omakase experience lasts 90 minutes
+    WHERE dateAndTime < (NOW() - INTERVAL 90 MINUTE);
+END $$
+DELIMITER ;
+ 
 -- ---------------- FOR advanced feature -----------------    
 -- Create a procedure to export alldetails view into csv
 DROP PROCEDURE IF EXISTS exportDetails;
