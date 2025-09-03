@@ -513,7 +513,7 @@ BEGIN
     
 	-- Check if allergyType and allergy level in the ENUM
     -- In this project, it assumes all diners only have allergic reactions to the listed allergens 
-    IF allergyType IN ('Dairy','Shellfish','Nuts','Eggs','Sesame','Wheat','Soy') 
+    IF allergyType IN ('Dairy','Shellfish','Nuts','Eggs','Sesame','Wheat','Soy','Other') 
 		AND allergyLevel IN ('Sensitive','Mild','Severe') 
         AND verifyId = -1 
         AND verifyDinerId != -1 THEN
