@@ -1,7 +1,7 @@
 -- A starter sql file to build database in MySQL Workbench
 
 DROP DATABASE IF EXISTS oma;
-CREATE DATABASE oma; 
+CREATE DATABASE IF NOT EXISTS oma; 
 USE oma;
 
 -- Create dinners table 
