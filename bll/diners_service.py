@@ -1,4 +1,4 @@
-from dal import Diners
+from ..dal import Diners
 """
 Business Logic Layer (BLL) for Diners.
 

@@ -1,4 +1,4 @@
-from dal import Allergies
+from ..dal import Allergies
 from .diners_service import get_diner_id
 
 """

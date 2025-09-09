@@ -1,4 +1,4 @@
-from dal import Prices
+from ..dal import Prices
 
 """
 Business Logic Layer (BLL) for Prices.

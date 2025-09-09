@@ -1,7 +1,7 @@
-from dal import AllDetails
-from dal import Revenues
 from .rooms_service import room_existing
 from .reservations_service import res_existing
+from ..dal import AllDetails
+from ..dal import Revenues
 
 """
 Business Logic Layer (BLL) for Reports.

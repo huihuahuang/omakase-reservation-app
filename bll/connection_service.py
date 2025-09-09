@@ -1,4 +1,4 @@
-from dal import DBconnection
+from ..dal import DBconnection
 # Test server if it is connectable
 def connected_db(server):
     """

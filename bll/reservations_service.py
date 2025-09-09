@@ -1,6 +1,6 @@
 from datetime import datetime, time, timedelta
-from dal import Reservations
 from .rooms_service import room_existing
+from ..dal import Reservations
 
 """
 Business Logic Layer (BLL) for Reservations.

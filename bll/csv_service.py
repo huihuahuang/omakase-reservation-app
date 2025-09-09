@@ -1,5 +1,5 @@
 import csv
-from dal import CreateCSV
+from ..dal import CreateCSV
 
 """
 Business Logic Layer (BLL) for CSV Export.

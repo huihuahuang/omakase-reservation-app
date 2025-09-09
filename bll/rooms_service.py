@@ -1,4 +1,4 @@
-from dal import Rooms
+from ..dal import Rooms
 
 """
 Business Logic Layer (BLL) for Rooms.
