@@ -25,7 +25,7 @@ class Revenues:
             `totalrevenuebyclass` is defined.
         """
         db = DBconnection(server)
-        query = "SELECT * FROM totalRevenueByClass"
+        query = "SELECT * FROM total_revenue_by_class"
         cur = db.execute_query(query)
         res = cur.fetchall()
         cur.close()

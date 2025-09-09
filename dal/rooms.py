@@ -23,7 +23,7 @@ class Rooms:
             int: A room existence flag (ID or non-`-1` if exists; `-1` if not found).
         """
         db = DBconnection(server)
-        query = "SELECT getRoomExistence(%s)"
+        query = "SELECT get_room_existence(%s)"
         cur = db.execute_query(query, [name])
         res = cur.fetchone()[0]
         cur.close()
@@ -45,7 +45,7 @@ class Rooms:
         """
         db = DBconnection(server)
         cur = db.con.cursor()
-        cur.callproc("getAllRooms")
+        cur.callproc("get_all_rooms")
         cache = []
         for rooms in cur.stored_results():
             for r in rooms.fetchall():
@@ -101,7 +101,7 @@ class Rooms:
 
             # When class exists and room name does not exist, add new room
             if class_id != -1 and room_id == -1:
-                cur.callproc("addRoom", [room_name, tv, class_name])
+                cur.callproc("add_room", [room_name, tv, class_name])
                 db.commit()
                 # Successfully added
                 mes = True
@@ -160,7 +160,7 @@ class Rooms:
                         mes = -3
                     else:
                         cur.callproc(
-                            "updateRoom",
+                            "update_room",
                             [room, new_room, tv, staff, new_class])
                         db.commit()
                             # Successfully update

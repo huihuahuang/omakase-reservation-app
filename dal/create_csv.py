@@ -25,7 +25,7 @@ class CreateCSV:
         cur = db.con.cursor()
         cache = []
         # Export csv with headers
-        cur.callproc("exportDetails")
+        cur.callproc("export_details")
         for res in cur.stored_results():
             for r in res.fetchall():
                 cache.append(r)

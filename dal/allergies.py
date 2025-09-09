@@ -22,7 +22,7 @@ class Allergies:
             int: The allergy ID if found; `-1` if not found.
         """
         db = DBconnection(server)
-        query = "SELECT getAllergyId(%s, %s)"
+        query = "SELECT get_allergy_id(%s, %s)"
         cur = db.execute_query(query, [diner, allergy_type])
         res = cur.fetchone()[0]
         cur.close()
@@ -42,7 +42,7 @@ class Allergies:
         """
         db = DBconnection(server)
         cur = db.con.cursor()
-        cur.callproc("getAllAllergies")
+        cur.callproc("get_all_allergies")
         cache = []
         for allergies in cur.stored_results():
             for allergy in allergies.fetchall():
@@ -111,7 +111,7 @@ class Allergies:
                 # Allergy already exists for that diner
                 mes = -3
             else:
-                cur.callproc("addAllergy",
+                cur.callproc("add_allergy",
                              [diner_name, allergy_type, allergy_level])
                 db.commit()
                 mes = True
@@ -144,7 +144,7 @@ class Allergies:
             allergy_id = Allergies.get_allergy_id(server, diner_name,
                                                   allergy_type)
             if allergy_id != -1:
-                cur.callproc("deleteAllergy",
+                cur.callproc("delete_allergy",
                              [diner_name, allergy_type])
                 db.commit()
                 # Successfully deleted

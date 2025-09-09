@@ -26,7 +26,7 @@ class Reservations:
             int: A non-`-1` value if a reservation exists; `-1` if not found.
         """
         db = DBconnection(server)
-        query = "SELECT getReservationExistence(%s, %s)"
+        query = "SELECT get_reservation_existence(%s, %s)"
         cur = db.execute_query(query, [dtime, room])
         res = cur.fetchone()[0]
         cur.close()
@@ -49,7 +49,7 @@ class Reservations:
         """
         db = DBconnection(server)
         cur = db.con.cursor()
-        cur.callproc("getAllReservations")
+        cur.callproc("get_all_reservations")
         cache = []
         for res in cur.stored_results():
             for (dt, room, diner, group)  in res.fetchall():
@@ -137,7 +137,7 @@ class Reservations:
                 # Logic: x_start < y_end and y_start < a_end
                 # Check primary key (dateAndTime, room)
                 q1 = (
-                    "SELECT * FROM alldetails "
+                    "SELECT * FROM all_details "
                     "WHERE room = %s "
                     "AND (%s < ADDTIME(dateAndTime, SEC_TO_TIME(1.5 * 3600)) "
                     "AND dateAndTime < ADDTIME(%s, SEC_TO_TIME(1.5 * 3600)))"
@@ -148,7 +148,7 @@ class Reservations:
 
                 # Check candidate key (dateAndTime, dinerId)
                 q2 = (
-                    "SELECT * FROM alldetails "
+                    "SELECT * FROM all_details "
                     "WHERE diner = %s "
                     "AND (%s < ADDTIME(dateAndTime, SEC_TO_TIME(1.5 * 3600)) "
                     "AND dateAndTime < ADDTIME(%s, SEC_TO_TIME(1.5 * 3600)))"
@@ -168,7 +168,7 @@ class Reservations:
                 else:
                     # When diner exists, room exists and record not found
                     cur = db.con.cursor()
-                    cur.callproc("addReservation",
+                    cur.callproc("add_reservation",
                                          [dtime, room_name, diner_name, group])
                     db.commit()
                     cur.close()
@@ -200,7 +200,7 @@ class Reservations:
         try:
             res_id = Reservations.get_res_existence(server, dtime, room_name)
             if res_id != -1:
-                cur.callproc("deleteReservation", [dtime, room_name])
+                cur.callproc("delete_reservation", [dtime, room_name])
                 db.commit()
                 # Successfully canceled
                 mes = True

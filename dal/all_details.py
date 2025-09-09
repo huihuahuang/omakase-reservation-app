@@ -23,7 +23,7 @@ class AllDetails:
                  group_size, staff, allergy_info, bill_total)
         """
         db = DBconnection(server)
-        query = "SELECT * FROM allDetails"
+        query = "SELECT * FROM all_details"
         cur = db.execute_query(query)
         res = cur.fetchall()
         cur.close()

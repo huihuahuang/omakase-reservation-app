@@ -20,7 +20,7 @@ class Diners:
             int: The diner ID if found; `-1` if the diner does not exist.
         """
         db = DBconnection(server)
-        query = "SELECT getDinerId(%s)"
+        query = "SELECT get_diner_id(%s)"
         cur = db.execute_query(query, [diner])
         res = cur.fetchone()[0]
         cur.close()
@@ -41,7 +41,7 @@ class Diners:
         """
         db = DBconnection(server)
         cur = db.con.cursor()
-        cur.callproc("getAllDiners")
+        cur.callproc("get_all_diners")
         cache = []
         for diners in cur.stored_results():
             for d in diners.fetchall():
@@ -91,7 +91,7 @@ class Diners:
         try:
             diner_id = Diners.get_diner_id(server, name)
             if diner_id == -1:
-                cur.callproc("addDiner", [name, phone])
+                cur.callproc("add_diner", [name, phone])
                 db.commit()
                 # Successfully added
                 mes = True
@@ -125,7 +125,7 @@ class Diners:
         try:
             diner_id = Diners.get_diner_id(server, name)
             if diner_id != -1:
-                cur.callproc("deleteDiner", [name])
+                cur.callproc("delete_diner", [name])
                 db.commit()
                 # Successfully deleted
                 mes = True

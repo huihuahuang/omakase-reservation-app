@@ -20,7 +20,7 @@ class Prices:
             int: The class ID if found; `-1` if not found.
         """
         db = DBconnection(server)
-        query = "SELECT getClassId(%s)"
+        query = "SELECT get_class_id(%s)"
         cur = db.execute_query(query, [name])
         res = cur.fetchone()[0]
         cur.close()
@@ -42,7 +42,7 @@ class Prices:
         """
         db = DBconnection(server)
         cur = db.con.cursor()
-        cur.callproc("getAllPrices")
+        cur.callproc("get_all_prices")
         cache = []
         for prices in cur.stored_results():
             for (classId, name, price) in prices.fetchall():
@@ -92,7 +92,7 @@ class Prices:
         try:
             class_id = Prices.get_class_id(server, name)
             if class_id == -1:
-                cur.callproc("addClass", [name, price])
+                cur.callproc("add_class", [name, price])
                 db.commit()
                 # Successfully added
                 mes = True
@@ -133,7 +133,7 @@ class Prices:
             old_name_id = Prices.get_class_id(server, old_name)
             new_name_id = Prices.get_class_id(server, new_name)
             if old_name_id != -1 and (new_name_id == -1 or new_name_id == old_name_id):
-                cur.callproc("updateClass",
+                cur.callproc("update_class",
                              [old_name, new_name, new_price])
                 db.commit()
                 # Successfully updated

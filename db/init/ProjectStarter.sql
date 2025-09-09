@@ -1,18 +1,18 @@
 -- A starter sql file to build database in MySQL Workbench
 
-DROP DATABASE IF EXISTS oma;
-CREATE DATABASE IF NOT EXISTS oma; 
-USE oma;
+DROP DATABASE IF EXISTS `oma`;
+CREATE DATABASE IF NOT EXISTS `oma`; 
+USE `oma`;
 
 -- Create dinners table 
-DROP TABLE IF EXISTS diners;
-CREATE TABLE diners (
+DROP TABLE IF EXISTS `diners`;
+CREATE TABLE `diners` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     diner VARCHAR(50) NOT NULL UNIQUE,
     phone CHAR(12) NOT NULL
 );
 -- Insert initial data with AI-generated customers
-INSERT INTO diners (diner, phone)
+INSERT INTO `diners` (diner, phone)
 VALUES 
 	('Liam Sullivan', '347-891-2456'),
 	('Sofia Rossi', '213-456-7890'),
@@ -32,8 +32,8 @@ VALUES
 
 -- Create allergy list
 -- If the allergen is other, the server will call the customer to confirm 
-DROP TABLE IF EXISTS allergies;
-CREATE TABLE allergies (
+DROP TABLE IF EXISTS `allergies`;
+CREATE TABLE `allergies` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     dinerId INT NOT NULL,
     `type` ENUM('Dairy', 'Shellfish', 'Nuts', 'Eggs', 'Sesame', 'Wheat', 'Soy', 'Other'),
@@ -42,7 +42,7 @@ CREATE TABLE allergies (
         REFERENCES diners (id)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
-INSERT INTO allergies(dinerId, `type`, `level`)
+INSERT INTO `allergies`(dinerId, `type`, `level`)
 VALUES
 	(2, 'Shellfish', 'Severe'),
 	(2, 'Nuts', 'Mild'),
@@ -52,13 +52,13 @@ VALUES
 
  -- Create prices table/menu
  -- Each table is assigned a unique set of courses for the omakase experience 
-DROP TABLE IF EXISTS prices;
-CREATE TABLE prices (
+DROP TABLE IF EXISTS `prices`;
+CREATE TABLE `prices` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     class VARCHAR(50) NOT NULL UNIQUE,
     costPerPerson DECIMAL(8 , 2 ) NOT NULL CHECK (costPerPerson > 0)
 );
-INSERT INTO prices (class, costPerPerson)
+INSERT INTO `prices` (class, costPerPerson)
 VALUES 
 	('Intro', 85.00),
 	('Premium', 120.00),
@@ -66,7 +66,7 @@ VALUES
 	('Seasonal', 200.00);
 
 -- Create rooms table to store detailed accessory and staff information
-DROP TABLE IF EXISTS rooms;
+DROP TABLE IF EXISTS `rooms`;
 CREATE TABLE rooms (
     room VARCHAR(50) PRIMARY KEY,
     TVProvided TINYINT NOT NULL,
@@ -76,7 +76,7 @@ CREATE TABLE rooms (
         REFERENCES prices (id)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
-INSERT INTO rooms (room, TVprovided, staff, classId)
+INSERT INTO `rooms` (room, TVprovided, staff, classId)
 VALUES 
 	('Sakura', 1, 'Chef Aki', 4),
 	('Umi', 0, 'Chef Ken', 3),
@@ -89,8 +89,8 @@ VALUES
 
 
 -- Create reservations table and initially insert 35 rows of AI-generated information
-DROP TABLE IF EXISTS reservations;
-CREATE TABLE reservations (
+DROP TABLE IF EXISTS `reservations`;
+CREATE TABLE `reservations` (
     dateAndTime DATETIME,
     room VARCHAR(50) NOT NULL,
     dinerId INT NOT NULL,
@@ -103,7 +103,7 @@ CREATE TABLE reservations (
         REFERENCES diners (id)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
-INSERT INTO reservations (dateAndTime, room, dinerId, totalDiners)
+INSERT INTO `reservations` (dateAndTime, room, dinerId, totalDiners)
 VALUES
 	('2025-07-02 17:00:00', 'Kumo', 11, 3),
 	('2025-08-03 20:00:00', 'Hana', 9, 1),
@@ -144,8 +144,8 @@ VALUES
     
 -- ------------- Create Views --------------------
 -- Create all details table
-DROP VIEW IF EXISTS allDetails;
-CREATE VIEW allDetails AS
+DROP VIEW IF EXISTS `all_details`;
+CREATE VIEW `all_details` AS
     SELECT
         dateAndTime,
         rm.room,
@@ -171,8 +171,8 @@ CREATE VIEW allDetails AS
     ORDER BY dateAndTime;
         
 -- Create total revenue by class
-DROP VIEW IF EXISTS totalRevenueByClass;
-CREATE VIEW totalRevenueByClass AS
+DROP VIEW IF EXISTS `total_revenue_by_class`;
+CREATE VIEW `total_revenue_by_class` AS
     SELECT 
         class,
         totalDiners,
@@ -188,17 +188,17 @@ CREATE VIEW totalRevenueByClass AS
 						2)) AS totalRevenue,
 			SUM(CAST(REPLACE(bill, '$', '') AS DECIMAL (8 , 2 ))) AS total
 		FROM 
-			allDetails
+			all_details
 		GROUP BY class   
         ) AS revenue;
         
 
 -- ---------------- FOR diners ----------------- 
 -- 1. Create getter function for looking up key based on diner name
-DROP FUNCTION IF EXISTS getDinerId;    
+DROP FUNCTION IF EXISTS `get_diner_id`;    
 DELIMITER $$
 
-CREATE FUNCTION getDinerId(dinerName VARCHAR(50))
+CREATE FUNCTION `get_diner_id`(dinerName VARCHAR(50))
 RETURNS INT DETERMINISTIC
 BEGIN
 	DECLARE foundDinerId INT DEFAULT -1;
@@ -216,9 +216,9 @@ DELIMITER ;
 
 
 -- 2. Create procedure to get all diners information
-DROP PROCEDURE IF EXISTS getAllDiners;
+DROP PROCEDURE IF EXISTS `get_all_diners`;
 DELIMITER $$
-CREATE PROCEDURE getAllDiners()
+CREATE PROCEDURE `get_all_diners`()
 BEGIN
 	SELECT 
 		*
@@ -230,31 +230,31 @@ DELIMITER ;
 
 
 -- 3. Create procedure to add diners
-DROP PROCEDURE IF EXISTS addDiner;
+DROP PROCEDURE IF EXISTS `add_diner`;
 DELIMITER $$
-CREATE PROCEDURE addDiner(IN dinerName VARCHAR(50), IN phone CHAR(12))
+CREATE PROCEDURE `add_diner`(IN dinerName VARCHAR(50), IN phone CHAR(12))
 BEGIN
 	DECLARE verifyId INT;
-	SET verifyId = getDinerId(dinerName);
+	SET verifyId = get_diner_id(dinerName);
     
     IF verifyId = -1 THEN
 		INSERT INTO diners (diner, phone)
 		VALUES (dinerName, phone);
     END IF;
 	-- Indicate successful insertion, it should return new id
-	SELECT getDinerId(dinerName) AS dinerId;
+	SELECT get_diner_id(dinerName) AS dinerId;
 END $$
 DELIMITER ;
 
 
 
 -- 4. Create procedure for deleting diner
-DROP PROCEDURE IF EXISTS deleteDiner;
+DROP PROCEDURE IF EXISTS `delete_diner`;
 DELIMITER $$
-CREATE PROCEDURE deleteDiner(IN dinerName VARCHAR(50))
+CREATE PROCEDURE `delete_diner`(IN dinerName VARCHAR(50))
 BEGIN
 	DECLARE verifyId INT;
-	SET verifyId = getDinerId(dinerName);
+	SET verifyId = get_diner_id(dinerName);
     
     IF verifyId != -1 THEN
 		DELETE FROM diners
@@ -262,17 +262,17 @@ BEGIN
     END IF;
     
 	-- Indicate successful deletion, it should return -1
-	SELECT getDinerId(dinerName) AS dinerId;
+	SELECT get_diner_id(dinerName) AS dinerId;
 END $$
 DELIMITER ;
 
     
 -- ---------------- FOR prices -----------------     
 -- 1. Create getter function for looking up key based on class name
-DROP FUNCTION IF EXISTS getClassId;    
+DROP FUNCTION IF EXISTS `get_class_id`;    
 DELIMITER $$
 
-CREATE FUNCTION getClassId(className VARCHAR(50))
+CREATE FUNCTION `get_class_id`(className VARCHAR(50))
 RETURNS INT DETERMINISTIC
 BEGIN
 	DECLARE foundClassId INT DEFAULT -1;
@@ -290,9 +290,9 @@ DELIMITER ;
 
 
 -- 2. Create procedure to get all prices information
-DROP PROCEDURE IF EXISTS getAllPrices;
+DROP PROCEDURE IF EXISTS `get_all_prices`;
 DELIMITER $$
-CREATE PROCEDURE getAllPrices()
+CREATE PROCEDURE `get_all_prices`()
 BEGIN
 	SELECT 
 		*
@@ -304,33 +304,33 @@ DELIMITER ;
 
 
 -- 3. Create procedure to add classes
-DROP PROCEDURE IF EXISTS addClass;
+DROP PROCEDURE IF EXISTS `add_class`;
 DELIMITER $$
-CREATE PROCEDURE addClass(IN className VARCHAR(50), IN price DECIMAL(8, 2))
+CREATE PROCEDURE `add_class`(IN className VARCHAR(50), IN price DECIMAL(8, 2))
 BEGIN
 	DECLARE verifyId INT;
-	SET verifyId = getClassId(className);
+	SET verifyId = get_class_id(className);
     
     IF verifyId = -1 THEN
 		INSERT INTO prices (class, costPerPerson)
 		VALUES (className, price);
     END IF;
 	-- Indicate successful insertion
-	SELECT getClassId(className) AS classId;
+	SELECT get_class_id(className) AS classId;
 END $$
 DELIMITER ;
 
 
 
 -- 4. Create procedure to update Class
-DROP PROCEDURE IF EXISTS updateClass;
+DROP PROCEDURE IF EXISTS `update_class`;
 DELIMITER $$
-CREATE PROCEDURE updateClass(IN oldClass VARCHAR(50), IN newClass VARCHAR(50), IN newPrice DECIMAL(8,2))
+CREATE PROCEDURE `update_class`(IN oldClass VARCHAR(50), IN newClass VARCHAR(50), IN newPrice DECIMAL(8,2))
 BEGIN
 	DECLARE verifyId INT;
     DECLARE verifyNewId INT;
-	SET verifyId = getClassId(oldClass);
-    SET verifyNewId = getClassId(newClass);
+	SET verifyId = get_class_id(oldClass);
+    SET verifyNewId = get_class_id(newClass);
     
     IF verifyId != -1 AND (verifyNewId = -1 OR newClass = oldClass) THEN
 		UPDATE prices
@@ -345,10 +345,10 @@ DELIMITER ;
     
 -- ---------------- FOR rooms -----------------     
 -- 1. Create getter function to check existence based on room name
-DROP FUNCTION IF EXISTS getRoomExistence;    
+DROP FUNCTION IF EXISTS `get_room_existence`;    
 DELIMITER $$
 
-CREATE FUNCTION getRoomExistence(roomName VARCHAR(50))
+CREATE FUNCTION `get_room_existence`(roomName VARCHAR(50))
 RETURNS INT DETERMINISTIC
 BEGIN
 	DECLARE foundRoom INT;
@@ -371,9 +371,9 @@ DELIMITER ;
 -- 2. Get rooms table information.
 -- Instead of getting the raw classId (int) and TVprovided(1 or 0)
 -- It will present the class name of classId and yes or no of TVProvided to improve readability
-DROP PROCEDURE IF EXISTS getAllRooms;
+DROP PROCEDURE IF EXISTS `get_all_rooms`;
 DELIMITER $$
-CREATE PROCEDURE getAllRooms()
+CREATE PROCEDURE `get_all_rooms`()
 BEGIN
 	SELECT 
 		room,
@@ -391,22 +391,22 @@ DELIMITER ;
 
 
 -- 3. Create procedure to add rooms
-DROP PROCEDURE IF EXISTS addRoom;
+DROP PROCEDURE IF EXISTS `add_room`;
 DELIMITER $$
-CREATE PROCEDURE addRoom(IN roomName VARCHAR(50), IN tv TINYINT, IN className VARCHAR(50))
+CREATE PROCEDURE `add_room`(IN roomName VARCHAR(50), IN tv TINYINT, IN className VARCHAR(50))
 BEGIN
 	-- If add room to business, default staff will be the owner for simplicity.
 	DECLARE verifyClassId INT;
     DECLARE verifyRoom INT;
     
-	SET verifyClassId = getClassId(className);
-    SET verifyRoom = getRoomExistence(roomName);
+	SET verifyClassId = get_class_id(className);
+    SET verifyRoom = get_room_existence(roomName);
     
     -- When class exists and room name does not exist, add new room
     IF verifyClassId != -1 AND verifyRoom = -1 THEN
 		INSERT INTO rooms (room, TVProvided, classId)
 		VALUES (roomName, tv, verifyClassId);
-        SELECT getRoomExistence(roomName) AS roomCreated;
+        SELECT get_room_existence(roomName) AS roomCreated;
 	ELSEIF verifyClassId = -1 AND verifyRoom = -1 THEN
 		SELECT -2 AS classNotValid;
 	ELSEIF verifyClassId != -1 AND verifyRoom != -1 THEN
@@ -420,20 +420,20 @@ DELIMITER ;
 
 
 -- 4. Create procedure to update Room
-DROP PROCEDURE IF EXISTS updateRoom;
+DROP PROCEDURE IF EXISTS `update_room`;
 DELIMITER $$
-CREATE PROCEDURE updateRoom(IN roomName VARCHAR(50), IN newRoom VARCHAR(50), IN tv INT, IN staffName VARCHAR(50), IN newClass VARCHAR(50))
+CREATE PROCEDURE `update_room`(IN roomName VARCHAR(50), IN newRoom VARCHAR(50), IN tv INT, IN staffName VARCHAR(50), IN newClass VARCHAR(50))
 
 BEGIN
 	DECLARE verifyRoom INT;
     DECLARE verifyClass INT DEFAULT -1;
     DECLARE verifyNewRoom INT;
-    SET verifyRoom = getRoomExistence(roomName);
-    SET verifyNewRoom = getRoomExistence(newRoom);
+    SET verifyRoom = get_room_existence(roomName);
+    SET verifyNewRoom = get_room_existence(newRoom);
 	
     
     IF newClass IS NOT NULL THEN
-		SET verifyClass = getClassId(newClass);
+		SET verifyClass = get_class_id(newClass);
     END IF;
     
     IF verifyRoom = 1 and (verifyNewRoom = -1 OR newRoom = roomName) THEN
@@ -455,15 +455,15 @@ DELIMITER ;
 
 -- ---------------- FOR allergies -----------------     
 -- 1. Create getter function to get key based on diner name and allergy type
-DROP FUNCTION IF EXISTS getAllergyId;    
+DROP FUNCTION IF EXISTS `get_allergy_id`;    
 DELIMITER $$
-CREATE FUNCTION getAllergyId(dinerName VARCHAR(50), allergyType VARCHAR(50))
+CREATE FUNCTION `get_allergy_id`(dinerName VARCHAR(50), allergyType VARCHAR(50))
 RETURNS INT DETERMINISTIC
 BEGIN
 	DECLARE foundAllergyId INT DEFAULT -1;
     DECLARE foundDinerId INT;
     
-    SET foundDinerId = getDinerId(dinerName);
+    SET foundDinerId = get_diner_id(dinerName);
     
     IF foundDinerId != -1 THEN
 		SELECT id INTO foundAllergyId
@@ -482,9 +482,9 @@ DELIMITER ;
 -- 2. Get allergies table information.
 -- Instead of getting the raw dinerId (int)
 -- It will present the diner name of dinerId to improve readability
-DROP PROCEDURE IF EXISTS getAllAllergies;
+DROP PROCEDURE IF EXISTS `get_all_allergies`;
 DELIMITER $$
-CREATE PROCEDURE getAllAllergies()
+CREATE PROCEDURE `get_all_allergies`()
 BEGIN
 	SELECT 
 		a.id,
@@ -501,15 +501,15 @@ DELIMITER ;
 
 
 -- 3. Create procedure to add allergies
-DROP PROCEDURE IF EXISTS addAllergy;
+DROP PROCEDURE IF EXISTS `add_allergy`;
 DELIMITER $$
-CREATE PROCEDURE addAllergy(IN diner VARCHAR(50), IN allergyType VARCHAR(50), IN allergyLevel VARCHAR(50))
+CREATE PROCEDURE `add_allergy`(IN diner VARCHAR(50), IN allergyType VARCHAR(50), IN allergyLevel VARCHAR(50))
 BEGIN
 	DECLARE verifyId INT;
     DECLARE verifyDinerId INT;
     
-    SET verifyId = getAllergyId(diner, allergyType);
-    SET verifyDinerId = getDinerId(diner);
+    SET verifyId = get_allergy_id(diner, allergyType);
+    SET verifyDinerId = get_diner_id(diner);
     
 	-- Check if allergyType and allergy level in the ENUM
     -- In this project, it assumes all diners only have allergic reactions to the listed allergens 
@@ -529,12 +529,12 @@ DELIMITER ;
 
 
 -- 4. Create procedure for deleting allergy record
-DROP PROCEDURE IF EXISTS deleteAllergy;
+DROP PROCEDURE IF EXISTS `delete_allergy`;
 DELIMITER $$
-CREATE PROCEDURE deleteAllergy(IN dinerName VARCHAR(50), IN allergyType VARCHAR(50))
+CREATE PROCEDURE `delete_allergy`(IN dinerName VARCHAR(50), IN allergyType VARCHAR(50))
 BEGIN
 	DECLARE verifyId INT;
-	SET verifyId = getAllergyId(dinerName, allergyType);
+	SET verifyId = get_allergy_id(dinerName, allergyType);
     
     IF verifyId != -1 THEN
 		DELETE FROM allergies
@@ -542,16 +542,16 @@ BEGIN
     END IF;
     
 	-- Indicate successful deletion, it should return -1
-	SELECT getAllergyId(dinerName, allergyType) AS AllergyId;
+	SELECT get_allergy_id(dinerName, allergyType) AS AllergyId;
 END $$
 DELIMITER ;
 
 
 -- ---------------- FOR reservations -----------------     
 -- 1. Create getter function to check existence based on datetime and room name
-DROP FUNCTION IF EXISTS getReservationExistence;    
+DROP FUNCTION IF EXISTS `get_reservation_existence`;    
 DELIMITER $$
-CREATE FUNCTION getReservationExistence(dtime DATETIME, roomName VARCHAR(50))
+CREATE FUNCTION `get_reservation_existence`(dtime DATETIME, roomName VARCHAR(50))
 RETURNS INT DETERMINISTIC
 BEGIN
 	DECLARE foundReservation INT;
@@ -572,9 +572,9 @@ DELIMITER ;
 -- 2. Get reservation table information.
 -- Instead of getting the raw dinerId (int)
 -- It will present the diner name of dinerId to improve readability
-DROP PROCEDURE IF EXISTS getAllReservations;
+DROP PROCEDURE IF EXISTS `get_all_reservations`;
 DELIMITER $$
-CREATE PROCEDURE getAllReservations()
+CREATE PROCEDURE `get_all_reservations`()
 BEGIN
 	SELECT 
 		dateAndTime,
@@ -591,16 +591,16 @@ DELIMITER ;
 
 
 -- 3. Create procedure to add reservations
-DROP PROCEDURE IF EXISTS addReservation;
+DROP PROCEDURE IF EXISTS `add_reservation`;
 DELIMITER $$
-CREATE PROCEDURE addReservation(IN dtime DATETIME, IN roomName VARCHAR(50), IN dinerName VARCHAR(50), IN totalDiners INT)
+CREATE PROCEDURE `add_reservation`(IN dtime DATETIME, IN roomName VARCHAR(50), IN dinerName VARCHAR(50), IN totalDiners INT)
 BEGIN
 	
 	DECLARE verifyRoom INT;
     DECLARE verifyDinerId INT;
     
-    SET verifyRoom = getRoomExistence(roomName);
-    SET verifyDinerId = getDinerId(dinerName);
+    SET verifyRoom = get_room_existence(roomName);
+    SET verifyDinerId = get_diner_id(dinerName);
     
 	-- In this setting, only accept reservation that is at least two day prior and booking time must be in hours (17:00 - 21:30)
     -- reference: https://stackoverflow.com/questions/8544438/select-records-from-now-1-day
@@ -620,12 +620,12 @@ DELIMITER ;
 
 
 -- 4. Create procedure for deleting reservation record
-DROP PROCEDURE IF EXISTS deleteReservation;
+DROP PROCEDURE IF EXISTS `delete_reservation`;
 DELIMITER $$
-CREATE PROCEDURE deleteReservation(IN dtime DATETIME, IN roomName VARCHAR(50))
+CREATE PROCEDURE `delete_reservation`(IN dtime DATETIME, IN roomName VARCHAR(50))
 BEGIN
 	DECLARE verifyExistence INT;
-	SET verifyExistence = getReservationExistence(dtime, roomName);
+	SET verifyExistence = get_reservation_existence(dtime, roomName);
     
     IF verifyExistence != -1 THEN
 		DELETE FROM reservations
@@ -633,16 +633,16 @@ BEGIN
     END IF;
     
 	-- Indicate successful deletion, it should return -1
-	SELECT getReservationExistence(dtime, roomName) AS existence;
+	SELECT get_reservation_existence(dtime, roomName) AS existence;
 END $$
 DELIMITER ;
 
 -- 5. Create event handler to delete expired reservations every hour
 SET GLOBAL event_scheduler = ON;
 -- In this way, the expired reservations from initial AI-generated data will not appear in the table.
-DROP EVENT IF EXISTS delete_expired_reservations;
+DROP EVENT IF EXISTS `delete_expired_reservations`;
 DELIMITER $$
-CREATE EVENT delete_expired_reservations
+CREATE EVENT `delete_expired_reservations`
 ON SCHEDULE EVERY 1 HOUR
 STARTS CURRENT_TIMESTAMP
 DO 
@@ -656,9 +656,9 @@ DELIMITER ;
  
 -- ---------------- FOR advanced feature -----------------    
 -- Create a procedure to export alldetails view into csv
-DROP PROCEDURE IF EXISTS exportDetails;
+DROP PROCEDURE IF EXISTS `export_details`;
 DELIMITER $$
-CREATE PROCEDURE exportDetails()
+CREATE PROCEDURE `export_details`()
 BEGIN
 	-- To improve readability, the csv files must include headers.
 	-- To add the headers, use UNION ALL to combine these two results
@@ -683,7 +683,7 @@ BEGIN
 			SELECT
 				dateAndTime, room, diner, phone, class, totalDiners,
 				staff, allergy, bill, 2 AS sorted
-			FROM alldetails
+			FROM all_details
 		) AS fullLists
     ORDER BY sorted, dateAndTime;
 END $$
