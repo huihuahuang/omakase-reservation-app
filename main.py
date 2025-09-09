@@ -1,7 +1,7 @@
 """
 Entry point for the Omakase reservation application.
 """
-from .app import Application
+from .gui import Application
 # Main function to create and run application instance
 def main():
     """
