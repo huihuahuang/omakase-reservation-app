@@ -124,7 +124,7 @@ class AllergiesFrame(ttk.LabelFrame):
                                    font=("Helvetica", 11))
         self.add_type.grid(row=0, column=2, sticky="e", padx=5)
 
-        self.types = ['Dairy', 'Shellfish', 'Nuts', 'Eggs', 'Sesame', 'Wheat', 'Soy']
+        self.types = ['Dairy', 'Shellfish', 'Nuts', 'Eggs', 'Sesame', 'Wheat', 'Soy', 'Other']
         self.levels = ['Sensitive', 'Mild', 'Severe']
 
         self.type_box = ttk.Combobox(self.add_frame, values=self.types, state="readonly")
