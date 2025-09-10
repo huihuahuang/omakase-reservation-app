@@ -8,10 +8,10 @@
       <li><a href="#about">About</a></li>
       <li><a href="#business-features--rules">Business Features & Rules</a></li>  
       <li><a href="#quick-demo">Quick Demo</a></li>
-      <li><a href="#project-structure">Project Structure</a></li>
       <li><a href="#prerequisites">Prerequisites</a></li>
       <li><a href="#quick-setup-options">Quick Setup Options</a></li>
       <li><a href="#usage">Usage</a></li>
+      <li><a href="#project-structure">Project Structure</a></li>
       <li><a href="#license">License</a></li>
       <li><a href="#author"> Author</a></li>
       <li><a href="#references">References</a></li>
@@ -42,10 +42,13 @@
   reservations.
 - Diners need to reserve room **_at least two days_** prior or the system will
   refuse to make reservations and present failure message.
-- The system removes expired reservations **_hourly_**.
+- The system automatically removes expired reservations every hour. This process
+  starts as soon as the database is created. If you use this program in or after
+  **_November 2025_**, you may need to update the initial reservation data, since
+  the provided seed data ends in October 2025. Otherwise, the system will clear
+  out all expired reservations unless new entries are added.
 - The advanced feature is **_exporting CSV_**, embedded in the view details
   section since view details is the most important table in the whole setting.
-
 - Each room is an independent dining room, only assigned to one group of diners
   and one chef each time. It is common that each room is locked up a class price
   to serve.
@@ -60,78 +63,9 @@
 
 ## Quick Demo
 
-[🔝 back to top](#readme-top)
+**_Click the image to view the [demo video](https://www.loom.com/share/746f1a9201f948f5abdc2c47f16762f5)_**
 
-## Project Structure
-
-```text
-OMAKASE/
-├── bll/ # Business Logic Layer
-│ ├── init.py
-│ ├── allergies_service.py
-│ ├── connection_service.py
-│ ├── csv_service.py
-│ ├── diners_service.py
-│ ├── prices_service.py
-│ ├── reservations_service.py
-│ ├── rooms_service.py
-│ └── views_service.py
-│
-├── dal/ # Data Access Layer
-│ ├── init.py
-│ ├── all_details.py
-│ ├── allergies.py
-│ ├── connection.py
-│ ├── create_csv.py
-│ ├── diners.py
-│ ├── prices.py
-│ ├── reservations.py
-│ ├── revenue.py
-│ └── rooms.py
-│
-├── db/init/ # Database initialization scripts
-| ├── ProjectStarter.sql
-│
-│
-├── gui/ # GUI Layer (Tkinter Frontend)
-│ ├── init.py
-│ ├── images/ # Background and UI images
-|   |── dash-bg.gif
-|   |── login-bg.gif
-|   |── revenues-bg.gif
-│ ├── tables/ # Table-specific UI components
-│ │ ├── init.py
-│ │ ├── allergies.py
-│ │ ├── details.py
-│ │ ├── diners.py
-│ │ ├── prices.py
-│ │ ├── reservations.py
-│ │ ├── revenues.py
-│ │ └── rooms.py
-│ │
-│ ├── widgets/ # Reusable GUI Widgets
-│ │ ├── init.py
-│ │ |── button_entry.py
-| | |── button.py
-| | |── login_entry.py
-│ │
-│ ├── app.py # Main Application Class
-│ ├── config.py # Loads environment variables
-│ ├── dashboard.py # Dashboard frame
-│ ├── data_display.py # Data display components
-│ ├── login.py # Login frame
-│ ├── logs.py # Logs panel
-│ ├── main.py # GUI entry point for this application
-│ └── side_bar.py # Sidebar functionality
-│
-├── .env # Environment variables
-├── .gitignore
-├── docker-compose.yml # Docker configuration for MySQL
-├── LICENSE
-├── demo_images # For readme.md demonstrations
-├── README.md
-└── requirements.txt # Python dependencies
-```
+[![Omakase Demo](./demo_images/demo-dashboard.png)](https://www.loom.com/share/746f1a9201f948f5abdc2c47f16762f5)
 
 [🔝 back to top](#readme-top)
 
@@ -145,7 +79,8 @@ OMAKASE/
     git clone https://github.com/huihuahuang/omakase-reservation-app.git
     ```
 
-4.  Create a virtual environment:
+4.  Rename the `omakase-reservation-app` repo into `omakase` for simplicity.
+5.  Create a virtual environment:
 
     ```bash
        # Windows
@@ -155,7 +90,7 @@ OMAKASE/
        python3 -m venv env
     ```
 
-5.  Go to the omakase repo and start the virtual environment.
+6.  Go to the omakase repo and start the virtual environment.
 
     ```text
     # cmd
@@ -169,7 +104,7 @@ OMAKASE/
 
     ```
 
-6.  Install package
+7.  Install package
     ```bash
     pip install -r requirements.txt
     ```
@@ -194,7 +129,8 @@ OMAKASE/
 
 4. Change the prefilled information into your local MySQL account information.
 
-   - For example:
+   - **For example:**
+
      ![log in screen for local MySQL](/demo_images/login-local.png)
 
 5. Click `Connect`.
@@ -235,7 +171,8 @@ OMAKASE/
 
 5. The account info will be prefilled. You don't need to change anything.
 
-   - For example:
+   - **For example**:
+
      ![login-prefilled](/demo_images/login-prefilled.png)
 
 6. Click `Connect`.
@@ -265,6 +202,111 @@ Three sections:
 
 - **CSV Export** in Details View
 - **Revenue by Class** view (with image background)
+
+---
+
+### Screens
+
+- **Diners Table**
+
+  ![diners table](./demo_images/diners.png)
+
+- **Prices Table**
+
+  ![prices table](./demo_images/prices.png)
+
+- **Rooms Table**
+
+  ![rooms table](./demo_images/rooms.png)
+
+- **Allergies Table**
+
+  ![allergies table](./demo_images/allergies.png)
+
+- **Reservations Table**
+
+  ![reservations table](./demo_images/reservations.png)
+
+- **Details Table**
+
+  ![details table](./demo_images/details.png)
+
+- **Revenues Table**
+
+  ![revenuew](./demo_images/revenues.png)
+
+[🔝 back to top](#readme-top)
+
+## Project Structure
+
+```text
+OMAKASE/
+├── bll/ # Business Logic Layer
+│ ├── init.py
+│ ├── allergies_service.py
+│ ├── connection_service.py
+│ ├── csv_service.py
+│ ├── diners_service.py
+│ ├── prices_service.py
+│ ├── reservations_service.py
+│ ├── rooms_service.py
+│ └── views_service.py
+│
+├── dal/ # Data Access Layer
+│ ├── init.py
+│ ├── all_details.py
+│ ├── allergies.py
+│ ├── connection.py
+│ ├── create_csv.py
+│ ├── diners.py
+│ ├── prices.py
+│ ├── reservations.py
+│ ├── revenue.py
+│ └── rooms.py
+│
+├── db/init/ # Database initialization scripts
+| ├── ProjectStarter.sql
+│
+│
+├── gui/ # GUI Layer (Tkinter Frontend)
+│ ├── init.py
+│ ├── images/ # Background and UI images
+| |   |── dash-bg.gif
+| |   |── login-bg.gif
+| |   |── revenues-bg.gif
+│ ├── tables/ # Table-specific UI components
+│ │   ├── init.py
+│ │   ├── allergies.py
+│ │   ├── details.py
+│ │   ├── diners.py
+│ │   ├── prices.py
+│ │   ├── reservations.py
+│ │   ├── revenues.py
+│ │   └── rooms.py
+│ │
+│ ├── widgets/ # Reusable GUI Widgets
+│ │   ├── init.py
+│ │   |── button_entry.py
+| |   |── button.py
+| |   |── login_entry.py
+│ │
+│ ├── app.py # Main Application Class
+│ ├── config.py # Loads environment variables
+│ ├── dashboard.py # Dashboard frame
+│ ├── data_display.py # Data display components
+│ ├── login.py # Login frame
+│ ├── logs.py # Logs panel
+│ ├── main.py # GUI entry point for this application
+│ └── side_bar.py # Sidebar functionality
+│
+├── .env # Environment variables
+├── .gitignore
+├── docker-compose.yml # Docker configuration for MySQL
+├── LICENSE
+├── demo_images # For readme.md demonstrations
+├── README.md
+└── requirements.txt # Python dependencies
+```
 
 [🔝 back to top](#readme-top)
 
