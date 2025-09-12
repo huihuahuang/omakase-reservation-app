@@ -8,6 +8,7 @@
       <li><a href="#about">About</a></li>
       <li><a href="#business-features--rules">Business Features & Rules</a></li>  
       <li><a href="#quick-demo">Quick Demo</a></li>
+      <li><a href="#entity-relationship-diagram">ERD</a></li>
       <li><a href="#prerequisites">Prerequisites</a></li>
       <li><a href="#quick-setup-options">Quick Setup Options</a></li>
       <li><a href="#usage">Usage</a></li>
@@ -69,9 +70,13 @@
 
 [🔝 back to top](#readme-top)
 
-## Entitiy Relationship Diagram (ERD)
+## Entity Relationship Diagram
+
+**_The ERD for omakase database_**
 
 ![erd](entity_relationship_diagram.jpg)
+
+[🔝 back to top](#readme-top)
 
 ## Prerequisites
 
