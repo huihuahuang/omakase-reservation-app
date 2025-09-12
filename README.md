@@ -69,6 +69,10 @@
 
 [🔝 back to top](#readme-top)
 
+## Entitiy Relationship Diagram (ERD)
+
+![erd](entity_relationship_diagram.jpg)
+
 ## Prerequisites
 
 1.  Install [Python **3.10+**](https://www.python.org/downloads/)
